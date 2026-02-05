@@ -14,7 +14,7 @@ const SignUp = () => {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.placeholder.toLowerCase() === 'email or phone number' ? 'email' : e.target.placeholder.toLowerCase()]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
@@ -22,10 +22,13 @@ const SignUp = () => {
         setError('');
         setLoading(true);
         try {
+            console.log('Attempting to register with:', formData);
             await register(formData);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong');
+            console.error('Registration error:', err);
+            console.error('Error response:', err.response);
+            setError(err.response?.data?.message || err.message || 'Something went wrong');
         } finally {
             setLoading(false);
         }
@@ -55,6 +58,7 @@ const SignUp = () => {
                         <div className="space-y-10">
                             <input
                                 type="text"
+                                name="name"
                                 placeholder="Name"
                                 required
                                 value={formData.name}
@@ -62,7 +66,8 @@ const SignUp = () => {
                                 className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-black transition-colors"
                             />
                             <input
-                                type="text"
+                                type="email"
+                                name="email"
                                 placeholder="Email or Phone Number"
                                 required
                                 value={formData.email}
@@ -71,6 +76,7 @@ const SignUp = () => {
                             />
                             <input
                                 type="password"
+                                name="password"
                                 placeholder="Password"
                                 required
                                 value={formData.password}

@@ -13,7 +13,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setCredentials({ ...credentials, [e.target.placeholder.toLowerCase() === 'email or phone number' ? 'email' : 'password']: e.target.value });
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
@@ -21,10 +21,13 @@ const Login = () => {
         setError('');
         setLoading(true);
         try {
+            console.log('Attempting to login with:', credentials);
             await login(credentials);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Invalid email or password');
+            console.error('Login error:', err);
+            console.error('Error response:', err.response);
+            setError(err.response?.data?.message || err.message || 'Invalid email or password');
         } finally {
             setLoading(false);
         }
@@ -53,7 +56,8 @@ const Login = () => {
                         {error && <p className="text-red-500 text-sm">{error}</p>}
                         <div className="space-y-10">
                             <input
-                                type="text"
+                                type="email"
+                                name="email"
                                 placeholder="Email or Phone Number"
                                 required
                                 value={credentials.email}
@@ -62,6 +66,7 @@ const Login = () => {
                             />
                             <input
                                 type="password"
+                                name="password"
                                 placeholder="Password"
                                 required
                                 value={credentials.password}
